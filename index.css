@@ -1,8 +1,16 @@
 body {
-    background-color: powderblue;
+    background-color: white;
   }
   h1 {
-    color: blue;
+    color: black;
+    background: rgba(179, 179, 179, 0.425);
+    text-align: center;
+    font-family: 'Arial';
+    font-style: bold;
+    margin: auto;
+    max-width: 6000px;
+    height: 50px;
+    border-radius: 25px;
   }
   p {
     color: red;

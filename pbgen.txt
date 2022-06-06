@@ -1,0 +1,12 @@
+$name : Progressbar Idea Generator
+$author : SevenSixteen
+$description : Generate a Random Progressbar95 Idea!
+
+$oslinename
+Progressbar
+BarOS
+PB/2
+
+$osname
+[oslinename] 4.0
+

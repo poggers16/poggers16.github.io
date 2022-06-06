@@ -12,7 +12,7 @@ Server [2001-2022]
 [0-9].[0-9]
 NOT [0-9].[0-9]
 NOT [0-9].[0-9] Server
-[00-122]
+[85-122]
 
 $osname
 [oslinename] [ver]

@@ -5,11 +5,12 @@ $description : Generate a Random Progressbar95 Idea!
 
 
 $ver
-Server [2001-2022]
+Server [2001-2081]
 [0-9].[0-9]
 NOT [0-9].[0-9]
 NOT [0-9].[0-9] Server
 [0-9][0-9]
+[1985-2022]
 
 $numerals
 I
@@ -33,10 +34,13 @@ XVIII
 XIX
 XX
 
+$BarOS lol
+[10-12].[numerals]
+[10-12].[numerals] Server
+
 $oslinename
 Progressbar [ver]
-BarOS [10-12].[numerals]
-PB/2
+BarOS [BarOS lol]
 
 $osname
 [oslinename]

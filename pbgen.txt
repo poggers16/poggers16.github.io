@@ -2,10 +2,7 @@ $name : Progressbar Idea Generator
 $author : SevenSixteen
 $description : Generate a Random Progressbar95 Idea!
 
-$oslinename
-Progressbar
-BarOS
-PB/2
+
 
 $ver
 Server [2001-2022]
@@ -14,6 +11,11 @@ NOT [0-9].[0-9]
 NOT [0-9].[0-9] Server
 [85-122]
 
+$oslinename
+Progressbar [ver]
+BarOS
+PB/2
+
 $osname
-[oslinename] [ver]
+[oslinename] 
 

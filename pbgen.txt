@@ -2,7 +2,7 @@ $name : Progressbar Idea Generator
 $author : SevenSixteen
 $description : Generate a Random Progressbar95 Idea!
 
-$real names wtf????
+$real names
 Meme
 XB
 Wista
@@ -16,7 +16,7 @@ NOT [0-9].[0-9]
 NOT [0-9].[0-9] Server
 [0-9][0-9]
 [1985-2022]
-[real names wtf????] Server
+[real names] Server
 
 $numerals
 I

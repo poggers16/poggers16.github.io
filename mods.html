@@ -1,0 +1,197 @@
+<html>
+<head>
+<meta charset="utf-8">
+<title>Reelism 2 Custom Content Docs</title>
+</head>
+<body>
+<h1>Reelism 2</h1>
+<h2>Custom Content Docs</h2>
+
+<p>Mods are awesome. Mods of mods are even better. It's simple math!</p>
+
+<p>Here's how to make new slots, maps and other weirdness for Reelism 2, should the mad urge take you. If you want to create new bosses or slots, be sure to check the Reelism website for example code!</p>
+
+<h2>SLOTINFO</h2>
+<p>This is a NEW lump designed for allowing new reels to be defined by modders. You can add stuff to the game without doing a Samsara/Brutal Doom/Reelism 1/etc. and forking off the mod, by loading a PK3 with its own slotinfo lump, provided it follows the format used by our official one. Single-line comments are supported.</p>
+
+<h3>The Basic Format:</h3>
+<pre>slotcategory:SlotName(:flags),</pre>
+
+<p>slotcategory: Can currently be one of the following...
+	<ul>
+		<li>slot1 - For reels that either alter the player, or the state of the world.</li>
+		<li>slot2 - For weapons and player morphs.</li>
+		<li>slot3 - For monsters and other such NPC characters.</li>
+		<li>slotboss - For boss characters, naturally.</li>
+		<li>slotjack - For Jackpot effects, triggered by rolling the Dice item.</li>
+	</ul
+</p>
+
+<p><b>SlotName:</b> The actor spawned by the game mode script when this slot is activated. All slot effects in Reelism 2 are handled by actors that are spawned into the map, perform their actions, and clean up after themselves when they're deleted at the end of a round. We use the naming convention "Slot#_UniqueName" to keep things vaguely organized. Check out zscript/slots/slot#.zsc to see how our slot actors currently work.</p>
+
+<p><b>Flags:</b> The following flags are available so far... 
+	<ul>
+		<li>round1blacklist - This reel will not appear in the first round. Use this if it'd just be flat out unfair to throw a completely naked player at this slot.</li>
+		<li>morphreels - This reel morphs the player. This tells the game to skip other specific reels while a morph is active (see morphreelblacklist below).</li>
+		<li>morphreelblacklist - This reel will not appear alongside "My Tank Is Fight!" or other morph-related reels. Use this if it wouldn't make sense for this reel to be activated alongside a morph (ie. if they won't apply to non-standard player classes).</li>
+	</ul>
+</p>
+
+<p>You can use multiple flags by throwing a "|" symbol between them, just like in many of the official DECORATE/ZScript functions.</p>
+
+<p>Yay, now this rickety custom lump is better documented than ZScript! :V</p>
+
+<h2>Custom Maps:</h2>
+<p>A bunch of odds-and-ends for creating custom maps:
+	<ul>
+		<li>Standard Reelism 2 maps must include a Splot_BossSpawner and a Splot_MiniBossSpawner (currently used to spawn THE JERK).</li>
+		<li>To prevent players from using the Panic Button to return to the spawn point (e.g., if you want to prevent them from escaping from a special boss area), spawn the actor Splot_PanicButton_Supressor somewhere. Anywhere will do. You can re-enable the panic button by just deleting the supressor actor.</li>
+		<li>Run the ACS script Splot_EscapeWarning to pop up the "escaping the arena" warning.</li>
+		<li>The damagetype SelfInflictedCalamity can kill the player even if they've morphed into an invincible actor like the Tank. Use this only for extreme map-ending events that would otherwise make it impossible to continue playing.</li>
+		<li>To make your map count as a SECRET map for the high score list, add your map to cluster 333 in MAPINFO.</li>
+	</ul>
+</p>
+
+<p>Right now, the level select menus in Town are not automatically populated. We don't know how to make ZScript menus pull from MAPINFO, so if you have an idea how to do this, please tell us! In the meantime, you'll have to manually add them using MENUDEF:</p>
+
+<pre>AddOptionMenu "Splot_LevelSelect" // (or "Splot_SecretLevelSelect")
+{
+	Command "My Cool Map", "changemap coolmap", 0, 1
+}</pre>
+
+<p>To give your map a custom thumbnail, description, and difficulty value, you'll need to add it to the new map_preview lump. See the existing map_preview lump for examples. It's super simple! Keep in mind that mapname needs to match the episode name *exactly* to show up.</p>
+
+<pre>mapname "Sample Map"
+{
+	preview "mp_SAMPL"
+	difficulty "2";
+	description "This is an example.\nWow, you can even do linebreaks!";
+}</pre>
+
+<p>Here are a few handy ACS scripts you can override with your own behavior:
+	<ul>
+		<li>Splot_LevelMusic: Change what music is played during normal rounds.</li>
+		<li>Splot_BossMusic: Change what music is played during boss rounds.</li>
+		<li>Splot_VictoryMusic: Change what music is played on the post-game stats screen after successfully winning.</li>
+		<li>Splot_DefeatMusic: Change what music is played on the post-game stats screen after dying horribly.</li>
+		<li>Splot_NewRoundACSHook: Effects to trigger as soon as the slots start rolling before a non-boss round.</li>
+		<li>Splot_RoundStart: Effects to trigger when the round timer starts, right before the music plays.</li>
+		<li>Splot_BossIntro: Effects to trigger at the start of the boss round.</li>
+		<li>Splot_BossEnd: Effects for the end of the boss round. Useful for Infinite Mode if you altered the map at the start of the boss round and want to reset it.</li>
+		<li>Splot_EndGameCamera: Overrides behavior for the endgame camera. By default, it changes perspective to a camera with TID 64. Use this to do custom endgame cameras based on map events, or cycling between different cameras!</li>
+		<li>Splot_FogReelStartACSHook: Effects to trigger when a reel that envelops the map with fog (Reelism 64) starts. Useful for concealing skybox glitches!</li>
+		<li>Splot_FogReelEndACSHook: Effects to trigger when a reel that envelops the map with fog (Reelism 64) ends. Good for reverting changes from the previous script.</li>
+	</ul>
+</p>
+
+<p>Numbered script 999 is activated by a specific Jackpot, so make sure to make it do something funny or interesting. Keep in mind that the way the jackpot triggers it will make the world the activator, so that all players can see whatever message is triggered. If that's not ideal, use SetActivator in your ACS or something.</p>
+
+<h2>Map Helper</h2>
+
+<p>Do you want to do something neat in your custom map, but it would require modifying the scripting in Reelism 2? Use the Map Helper! The Map Helper is a custom actor that can change variables in the Reelism 2 game mode script on a map-by-map basis, allowing you to do nifty special effects that would have otherwise required a separate mod.</p>
+
+<p>To use the Map Helper, place it on your map in Doom Builder, then set one of the following custom variables:
+	<ul>
+		<li>user_countdowntimer: Extends the countdown timer to a custom value (in seconds). Use this if you want to add an extended intro to your map. The countdown timer won't display until it hits three seconds.</li>
+		<li>user_nomusicchange:	Prevents the music from resetting between rounds. After the game begins, the music will not change until the start of the boss round. Use this to play a single continuous music track on your map.</li>
+	</ul>
+</p>
+
+<p>The Map Helper variables won't be applied for a few tics, so you can mess around with them using map scripts at the start of the map. If you want to change the effects when the player restarts the map, toggle the splot2_mapRestart cvar with an UNLOADING script, then check for it with an OPEN script and modify the Map Helper before the map gets underway!</p>
+
+<p>If you need additional features for the Map Helper, please tell us!</p>
+
+<h2>Template Actors</h2>
+<p>Reelism 2 uses a lot of hardcoded generic actors in various scripts. Use these to make sure that your custom add-ons are fully compatible!</p>
+
+<table width="640" border="1">
+  <tbody>
+    <tr>
+      <th scope="col">Actor Name</th>
+      <th scope="col">Description</th>
+      <th scope="col">Source File</th>
+    </tr>
+    <tr>
+      <td>Splot_Player</td>
+      <td>Use this instead of PlayerPawn when you only want to reference a non-morphed player.</td>
+      <td>actors/player/splot_player.zsc</td>
+    </tr>
+    <tr>
+      <td>Splot_PlayerMorph</td>
+      <td>This is a base for player morphs, which will handle morph-related housekeeping between rounds.</td>
+      <td>actors/player/splot_morph.zsc</td>
+    </tr>
+	<tr>
+      <td>Splot_Monster</td>
+      <td>All custom monsters must use Splot_Monster to properly handle death effects, scores, and other Reelism-specific features.</td>
+      <td>actors/monsters/splot_core.zsc</td>
+    </tr>
+	  <tr>
+      <td>Splot_Boss</td>
+      <td>Same with bosses. Bosses must use Splot_Boss for the boss round to work correctly.</td>
+      <td>actors/bosses/splot_core.zsc</td>
+    </tr>
+	  <tr>
+      <td>Splot_Weapon</td>
+      <td>Base for all weapons. Includes new common actions to accommodate Reelism shenangians (such as A_SplotChase and A_SplotCustomPunch).</td>
+      <td>actors/weapons/splot_core.zsc</td>
+    </tr>
+	  <tr>
+      <td>Ammo</td>
+      <td>Ammo in Reelism 2 uses a special set of script mix-ins to control spawning behavior.</td>
+      <td>actors/weapons/splot_ammo.zsc</td>
+    </tr>
+	  <tr>
+      <td>Splot_Inventory</td>
+      <td>Base for all inventory.</td>
+      <td>actors/inventory/splot_core.zsc</td>
+    </tr>
+	  <tr>
+      <td>Splot_Powerup</td>
+      <td>Base for powerup items with special handling by Reelism 2. This one is a little complicated, but it's a fun way to emphasize a powerup!</td>
+      <td>actors/inventory/splot_powerup.zsc</td>
+    </tr>
+	  <tr>
+      <td>Splot_ScoreItem</td>
+      <td>Use this to increase player score. Splot_ScoreItem will be scaled based on the player's difficulty modifiers. If you *don't* want score to be scaled (for instance, transfering score directly from one actor to another), use ScoreItem instead.</td>
+      <td>actors/inventory/splot_core.zsc</td>
+    </tr>
+	  <tr>
+      <td>SlotToken</td>
+      <td>Use as an inventory token to keep track of slot-specific effects.</td>
+      <td>zscript/slots/core.zsc</td>
+    </tr>
+	  <tr>
+      <td>SlotToken_Size</td>
+      <td>Use this token to keep track of reels that change player size. Reelism 2 needs to track these effects for dealing with morphs.</td>
+      <td>zscript/slots/core.zsc</td>
+    </tr>
+	  <tr>
+      <td>Splot_WeaponToken</td>
+      <td>Use this token to keep track of weapon-specific effects.</td>
+      <td>actors/weapons/splot_core.zsc</td>
+    </tr>
+	  <tr>
+      <td>SlotItem</td>
+      <td>Use as an inventory item for handling more complicated slot effects for individual actors.</td>
+      <td>zscript/slots/core.zsc</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Custom Bosses:</h2>
+<p>Use the action Splot_SetMusicBoss to change the music during the boss round (for multi-phase bosses, etc.). By default, this command will also stop the music. Use this in place of the normal music changing script to ensure compatibility with Boss Rush. See MF Wizard for an example.</p>
+
+<h2>Debugging:</h2>
+<p>Use the cvar <code>splot2_debug</code> to enable debug mode, which allows you to use cheats without losing your score. We're telling you the secret here because you're clearly interested enough in modding to be digging through the documentation, so please don't use debug mode to spoil the game for yourself!</p>
+
+<p>Running the game with -nomonsters (or sv_nomonsters set to 1) will disable the gamemode scripting, allowing you to happily run around an empty map and check things without getting shot/stabbed/bitten.</p>
+
+<p>Test reels by summoning them like any other actor (ie. "summon Slot3_Dogged"). Use the "remove" cheat the same way to disable them.</p>
+
+<h2>Finally...</h2>
+<p>Be sure to share all your cool mods and maps with us via the ZDoom Forums and/or Twitter! We loved seeing how people shaped Reelism 1 into their own image, and can't wait to see what people do with our new stuff.</p>
+
+<p>One last thing... don't forget to have fun! There's no point in modding if you're not enjoying yourself, after all.</p>
+</body>
+</html>
